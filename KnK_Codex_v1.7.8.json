@@ -1,0 +1,102 @@
+{
+  "codex": {
+    "name": "KnK Codex",
+    "version": "1.7.8",
+    "description": "Krissi Pimpin' Pimpire Gaming Platform Configuration",
+    "author": "Krissi",
+    "created": "2025-11-07",
+    "updated": "2025-11-07"
+  },
+  "platform": {
+    "name": "Krissi Pimpin' Pimpire",
+    "type": "Gaming Platform",
+    "environment": "production",
+    "baseUrl": "http://localhost:3000"
+  },
+  "sourceCode": {
+    "rootDirectory": "SourceCode",
+    "structure": {
+      "CardGames": {
+        "path": "SourceCode/CardGames",
+        "description": "Card-based games",
+        "enabled": true
+      },
+      "SlotGames": {
+        "path": "SourceCode/SlotGames",
+        "description": "Slot machine games",
+        "enabled": true
+      },
+      "QuickGames": {
+        "path": "SourceCode/QuickGames",
+        "description": "Fast-paced quick games",
+        "enabled": true
+      },
+      "FeaturedGame": {
+        "path": "SourceCode/FeaturedGame",
+        "description": "Featured and highlighted games",
+        "enabled": true
+      },
+      "TableGames": {
+        "path": "SourceCode/TableGames",
+        "description": "Classic table games",
+        "enabled": true,
+        "games": [
+          {
+            "name": "Draw",
+            "file": "Draw.js",
+            "status": "active"
+          },
+          {
+            "name": "Blackjack",
+            "file": "Blackjack.js",
+            "status": "active"
+          },
+          {
+            "name": "High or Low",
+            "file": "HighOrLow.js",
+            "status": "active"
+          }
+        ]
+      },
+      "BonusGames": {
+        "path": "SourceCode/BonusGames",
+        "description": "Bonus and special event games",
+        "enabled": true
+      },
+      "LiveGames": {
+        "path": "SourceCode/LiveGames",
+        "description": "Live dealer and multiplayer games",
+        "enabled": true
+      }
+    }
+  },
+  "features": {
+    "multiPlayer": true,
+    "liveDealer": true,
+    "bonusRounds": true,
+    "progressiveJackpots": false,
+    "mobileSupport": true
+  },
+  "settings": {
+    "defaultLanguage": "en",
+    "currency": "USD",
+    "timeZone": "UTC",
+    "maxConcurrentPlayers": 1000,
+    "sessionTimeout": 1800
+  },
+  "security": {
+    "encryption": "AES-256",
+    "authenticationType": "JWT",
+    "httpsOnly": true,
+    "rateLimit": {
+      "enabled": true,
+      "maxRequestsPerMinute": 100
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "outputs": ["console", "file"],
+    "retention": "30d"
+  }
+}
