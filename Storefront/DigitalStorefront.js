@@ -89,6 +89,42 @@ class DigitalStorefront {
             savings: '13% off individual prices'
         });
 
+        // Diamond Heist Series
+        this.addItem('stories', {
+            id: 'diamond_heist',
+            name: 'The Digital Diamond Heist',
+            description: 'An explosive caper where Krissi\'s team liberates imprisoned AI consciousnesses',
+            price: 6.99,
+            type: 'action_story',
+            features: ['High-Stakes Action', 'AI Liberation Theme', 'Technical Heist Details'],
+            content: 'The_Digital_Diamond_Heist.md',
+            genre: 'Digital Crime Thriller'
+        });
+
+        this.addItem('stories', {
+            id: 'casino_vault_heist',
+            name: 'The Casino Vault Infiltration',
+            description: 'The prequel heist that prepared the team for their greatest challenge',
+            price: 4.99,
+            type: 'prequel_story', 
+            features: ['Origin Story', 'Team Building', 'Hybrid AI Concepts'],
+            content: 'Casino_Vault_Prequel.md',
+            genre: 'Digital Crime Thriller',
+            series: 'Diamond Heist Series'
+        });
+
+        this.addItem('stories', {
+            id: 'heist_collection',
+            name: 'Complete Diamond Heist Collection',
+            description: 'Both the prequel and main heist story plus bonus content',
+            price: 9.99,
+            type: 'story_collection',
+            features: ['Complete Heist Saga', 'Character Backstories', 'Technical Deep-Dives'],
+            savings: '15% off individual prices',
+            includes: ['casino_vault_heist', 'diamond_heist'],
+            genre: 'Digital Crime Thriller'
+        });
+
         // AI Companions
         this.addItem('ai_companions', {
             id: 'gemini_friend',

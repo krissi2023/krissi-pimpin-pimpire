@@ -12,6 +12,9 @@ const geminiService = require('./gemini-service');
 
 // Import game classes
 const ClassicSlots = require('./SourceCode/SlotGames/ClassicSlots');
+const VideoSlots = require('./SourceCode/SlotGames/VideoSlots');
+const ProgressiveJackpotSlots = require('./SourceCode/SlotGames/ProgressiveJackpotSlots');
+const ThemedSlotMachines = require('./SourceCode/SlotGames/ThemedSlotMachines');
 const TexasHoldem = require('./SourceCode/CardGames/TexasHoldem');
 const RockPaperScissors = require('./SourceCode/QuickGames/RockPaperScissors');
 const BlackjackGame = require('./SourceCode/TableGames/Blackjack');
@@ -51,7 +54,35 @@ app.get('/', (req, res) => {
 app.get('/api/games', (req, res) => {
 	res.json({
 		availableGames: [
-			{ name: 'Classic Slots', type: 'SlotGame', endpoint: '/api/games/slots' },
+			{ 
+				name: 'Classic Slots', 
+				type: 'SlotGame', 
+				variant: 'classic',
+				endpoint: '/api/games/slots',
+				description: 'Traditional 3-reel fruit machine'
+			},
+			{ 
+				name: 'Video Slots', 
+				type: 'SlotGame', 
+				variant: 'video',
+				endpoint: '/api/games/slots',
+				description: 'Modern 5-reel video slots with bonus features'
+			},
+			{ 
+				name: 'Progressive Jackpot Slots', 
+				type: 'SlotGame', 
+				variant: 'progressive',
+				endpoint: '/api/games/slots',
+				description: 'Network progressive slots with mega jackpots'
+			},
+			{ 
+				name: 'Themed Slot Machines', 
+				type: 'SlotGame', 
+				variant: 'themed',
+				endpoint: '/api/games/slots',
+				description: 'Multiple themed slot experiences',
+				availableThemes: ['egyptian', 'ocean', 'space', 'fantasy', 'western', 'neon']
+			},
 			{ name: 'Texas Hold\'em', type: 'CardGame', endpoint: '/api/games/poker' },
 			{ name: 'Rock Paper Scissors', type: 'QuickGame', endpoint: '/api/games/rps' },
 			{ name: 'Blackjack', type: 'TableGame', endpoint: '/api/games/blackjack' }
@@ -63,10 +94,29 @@ app.get('/api/games', (req, res) => {
 app.post('/api/games/slots/init', (req, res) => {
 	try {
 		const gameId = 'slots_' + Date.now();
-		const game = new ClassicSlots();
+		const { slotType = 'classic', theme = 'egyptian' } = req.body;
+		
+		let game;
+		switch (slotType.toLowerCase()) {
+			case 'classic':
+				game = new ClassicSlots();
+				break;
+			case 'video':
+				game = new VideoSlots();
+				break;
+			case 'progressive':
+				game = new ProgressiveJackpotSlots();
+				break;
+			case 'themed':
+				game = new ThemedSlotMachines(theme);
+				break;
+			default:
+				game = new ClassicSlots(); // Default fallback
+		}
+		
 		const result = game.initialize();
 		gameInstances.set(gameId, game);
-		res.json({ gameId, ...result });
+		res.json({ gameId, slotType, theme: theme || null, ...result });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -80,6 +130,60 @@ app.post('/api/games/slots/:gameId/spin', (req, res) => {
 		}
 		const result = game.spin();
 		res.json(result);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post('/api/games/slots/:gameId/bet', (req, res) => {
+	try {
+		const game = gameInstances.get(req.params.gameId);
+		if (!game) {
+			return res.status(404).json({ error: 'Game not found' });
+		}
+		const { amount } = req.body;
+		const result = game.setBet(amount);
+		res.json(result);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get('/api/games/slots/:gameId/state', (req, res) => {
+	try {
+		const game = gameInstances.get(req.params.gameId);
+		if (!game) {
+			return res.status(404).json({ error: 'Game not found' });
+		}
+		const state = game.getGameState();
+		res.json(state);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post('/api/games/slots/:gameId/theme', (req, res) => {
+	try {
+		const game = gameInstances.get(req.params.gameId);
+		if (!game || !game.switchTheme) {
+			return res.status(404).json({ error: 'Game not found or theme switching not supported' });
+		}
+		const { theme } = req.body;
+		const result = game.switchTheme(theme);
+		res.json(result);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get('/api/games/slots/:gameId/jackpots', (req, res) => {
+	try {
+		const game = gameInstances.get(req.params.gameId);
+		if (!game || !game.getJackpotInfo) {
+			return res.status(404).json({ error: 'Game not found or jackpots not available' });
+		}
+		const jackpotInfo = game.getJackpotInfo();
+		res.json(jackpotInfo);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
