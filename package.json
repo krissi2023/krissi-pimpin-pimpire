@@ -1,12 +1,17 @@
 {
-  "name": "docker_web_app",
+  "name": "krissi-pimpin-pimpire",
   "version": "1.0.0",
-  "description": "Node.js on Docker",
-  "author": "First Last <first.last@example.com>",
+  "description": "Krissi Pimpin' Pimpire - AI-Powered Gaming Platform",
+  "author": "krissi2023",
   "main": "server.js",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "docker:build": "docker build -t krissi-pimpin-pimpire .",
+    "docker:run": "docker run -p 3000:3000 krissi-pimpin-pimpire"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

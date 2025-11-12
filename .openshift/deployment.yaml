@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: krissi-pimpin-pimpire
+  labels:
+    app: krissi-pimpin-pimpire
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: krissi-pimpin-pimpire
+  template:
+    metadata:
+      labels:
+        app: krissi-pimpin-pimpire
+        version: v1
+    spec:
+      containers:
+      - name: app
+        image: krissi-pimpin-pimpire:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gemini-secret
+              key: api-key
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/gemini/status
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: krissi-pimpin-pimpire-service
+  labels:
+    app: krissi-pimpin-pimpire
+spec:
+  selector:
+    app: krissi-pimpin-pimpire
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: krissi-pimpin-pimpire-route
+  labels:
+    app: krissi-pimpin-pimpire
+spec:
+  to:
+    kind: Service
+    name: krissi-pimpin-pimpire-service
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

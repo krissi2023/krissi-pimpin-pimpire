@@ -1,12 +1,224 @@
-# Try Out Development Containers: Node.js
+# Krissi Pimpin' Pimpire - AI-Powered Gaming Platform
 
-[![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/microsoft/vscode-remote-try-node)
+A comprehensive gaming platform featuring AI integration through Google's Gemini API and multiple casino-style games.
 
-A **development container** is a running container with a well-defined tool/runtime stack and its prerequisites. You can try out development containers with **[GitHub Codespaces](https://github.com/features/codespaces)** or **[Visual Studio Code Dev Containers](https://aka.ms/vscode-remote/containers)**.
+## 🎮 Features
 
-This is a sample project that lets you try out either option in a few easy steps. We have a variety of other [vscode-remote-try-*](https://github.com/search?q=org%3Amicrosoft+vscode-remote-try-&type=Repositories) sample projects, too.
+### AI Integration
+- **Google Gemini AI**: Full integration with Google's Gemini AI for intelligent game interactions
+- **Real-time AI Chat**: Interactive AI chat for game assistance and entertainment
+- **AI-Powered Content**: Generate dynamic game content and strategies
 
-> **Note:** If you already have a Codespace or dev container, you can jump to the [Things to try](#things-to-try) section.
+### Available Games
+
+#### 🎰 Slot Games
+- **Classic Slots**: Traditional 3-reel slot machine with multiple paylines
+  - 7 unique symbols with varying payouts
+  - 5 different payline combinations
+  - Progressive betting system
+
+#### 🃏 Card Games
+- **Texas Hold'em Poker**: Complete implementation of the classic poker variant
+  - Support for 2-8 players
+  - Full game phases: preflop, flop, turn, river
+  - Comprehensive betting system with fold, call, raise, check
+  - All-in and side pot support
+
+#### 🎲 Table Games
+- **Blackjack**: Classic 21 card game (basic implementation)
+- **High or Low**: Card prediction game
+- **Draw**: Custom card drawing game
+
+#### ⚡ Quick Games
+- **Rock Paper Scissors**: Fast-paced hand game with:
+  - Score tracking and statistics
+  - Game history
+  - Best-of-X tournament mode
+  - Win rate analytics
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (18+ recommended)
+- Google Gemini API key
+- Docker (for containerization)
+
+### Installation
+
+1. **Clone and Install**
+   ```bash
+   git clone https://github.com/krissi2023/krissi-pimpin-pimpire.git
+   cd krissi-pimpin-pimpire
+   npm install
+   ```
+
+2. **Configure Environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your GEMINI_API_KEY
+   ```
+
+3. **Run the Application**
+   ```bash
+   npm start
+   ```
+
+The server will start on `http://localhost:3000`
+
+## 🔧 API Documentation
+
+### Game Endpoints
+
+#### Initialize Games
+- `POST /api/games/slots/init` - Initialize slot machine
+- `POST /api/games/rps/init` - Initialize Rock Paper Scissors
+- `POST /api/games/poker/init` - Initialize Texas Hold'em
+- `POST /api/games/blackjack/init` - Initialize Blackjack
+
+#### Game Actions
+- `POST /api/games/slots/{gameId}/spin` - Spin the slot machine
+- `POST /api/games/rps/{gameId}/play` - Play Rock Paper Scissors
+  ```json
+  { "choice": "rock|paper|scissors" }
+  ```
+
+#### AI Endpoints
+- `GET /api/gemini/status` - Check AI service status
+- `POST /api/gemini/generate` - Generate AI content
+- `POST /api/gemini/chat` - Interactive AI chat
+
+## 🐳 Docker Support
+
+### Build and Run
+```bash
+docker build -t krissi-pimpin-pimpire .
+docker run -p 3000:3000 --env-file .env krissi-pimpin-pimpire
+```
+
+### Using npm scripts
+```bash
+npm run docker:build
+npm run docker:run
+```
+
+## ☁️ Red Hat Sandbox Deployment
+
+This application is ready for deployment on Red Hat's OpenShift Sandbox. See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+### Quick Deploy
+```bash
+# Login to OpenShift
+oc login --token=your_token --server=your_server
+
+# Create project
+oc new-project krissi-pimpin-pimpire
+
+# Deploy using Source-to-Image
+oc new-app nodejs~https://github.com/krissi2023/krissi-pimpin-pimpire.git
+oc expose svc/krissi-pimpin-pimpire
+```
+
+## 🏗️ Project Structure
+
+```
+krissi-pimpin-pimpire/
+├── .openshift/              # OpenShift deployment configurations
+├── SourceCode/              # Game implementations
+│   ├── BonusGames/         # Future bonus game implementations
+│   ├── CardGames/          # Poker and card-based games
+│   ├── QuickGames/         # Fast-paced mini games
+│   ├── SlotGames/          # Slot machine variants
+│   ├── TableGames/         # Casino table games
+│   └── LiveGames/          # Future live game implementations
+├── server.js               # Main Express server
+├── gemini-service.js       # AI service integration
+├── Dockerfile              # Container configuration
+├── package.json            # Dependencies and scripts
+└── .env.example            # Environment template
+```
+
+## 🎯 Game Examples
+
+### Playing Rock Paper Scissors
+```bash
+# Initialize game
+curl -X POST http://localhost:3000/api/games/rps/init
+
+# Play a round
+curl -X POST http://localhost:3000/api/games/rps/{gameId}/play \
+  -H "Content-Type: application/json" \
+  -d '{"choice": "rock"}'
+```
+
+### Spinning Slots
+```bash
+# Initialize slot machine
+curl -X POST http://localhost:3000/api/games/slots/init
+
+# Spin the reels
+curl -X POST http://localhost:3000/api/games/slots/{gameId}/spin
+```
+
+### AI Interaction
+```bash
+# Generate game strategy
+curl -X POST http://localhost:3000/api/gemini/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Give me a strategy for playing poker"}'
+```
+
+## 🔒 Security Features
+
+- Environment-based configuration
+- OpenShift security compliance
+- Resource limits and health checks
+- TLS termination on routes
+- Secrets management for API keys
+
+## 📈 Monitoring & Health
+
+- **Health Checks**: Liveness and readiness probes configured
+- **Resource Limits**: CPU and memory limits set
+- **Logging**: Structured logging for troubleshooting
+- **Metrics**: Ready for OpenShift monitoring
+
+## 🛠️ Development
+
+### Adding New Games
+1. Create your game class in the appropriate `SourceCode/` directory
+2. Add the import to `server.js`
+3. Create API endpoints following the existing pattern
+4. Update the games list in the `/api/games` endpoint
+
+### Environment Variables
+- `NODE_ENV`: Development/production mode
+- `GEMINI_API_KEY`: Google Gemini AI API key
+- `PORT`: Server port (default: 3000)
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📞 Support
+
+For support and questions:
+- Create an issue on GitHub
+- Check the deployment guide in [DEPLOYMENT.md](DEPLOYMENT.md)
+- Review the Gemini integration docs in [GEMINI_INTEGRATION.md](GEMINI_INTEGRATION.md)
+
+---
+
+**Ready to deploy to Red Hat Sandbox!** 🚀
+
+This platform is fully configured and ready for cloud deployment with comprehensive game implementations and AI integration.
 
 ## Setting up the development container
 
