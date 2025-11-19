@@ -72,30 +72,52 @@ The origin story of the digital detective and his partnership with the chaotic g
 - Behind-the-scenes content
 - Exclusive chapters for premium comics
 
----
-
+-
 ## 💵 Pricing & Rewards
 
-### Comic Purchases
-| Tier | Price | Gold Points | Arcade Credits | PB Points | Puzzles | Wallpapers |
-|------|-------|-------------|----------------|-----------|---------|------------|
-| Standard | $9.99 | 100 | 5,000 | 50 | 3 | 5 |
-| Premium | $12.99 | 150 | 6,500 | 75 | 4 | 7 |
+### Shop Items & Currency Bundles
+| Item | Tier | Price | PPC (Credits) | Gold Coins |
+| :--- | :--- | :--- | :--- | :--- |
+| **Comic Books** | Standard | $50.00 | 50.00 | 5,000 |
+| | Platinum (+35% Value)| $65.00 | 67.50 | 6,750 |
+| **Puzzles** | Standard | $19.99 | 20.00 | 2,000 |
+| | Platinum (+35% Value)| $25.99 | 27.00 | 2,700 |
+| **Wallpapers** | Standard | $9.99 | 10.00 | 1,000 |
+| | Platinum (+35% Value)| $12.99 | 13.50 | 1,350 |
+| **Bonus Pack** | Standard | $4.99 | 5.00 | 500 |
+| | Platinum (+35% Value)| $6.49 | 6.75 | 675 |
+
+### 💎 Platinum Perks: Why Upgrade?
+Platinum isn't just about the extra coins. It unlocks the full "Director's Cut" experience:
+* **Comics:** Unlocks exclusive "Lost Pages," concept art, and alternate story endings.
+* **Puzzles:** Unlocks animated "Live" puzzle pieces and a Gold Frame border upon completion.
+* **Wallpapers:** Unlocks the 4K animated version of the art (vs. static HD).
 
 ### Value Proposition
-- **$9.99 comic** = $50 in arcade credits + puzzles + wallpapers
-- **500% value** on every purchase!
+* **1:1 PPC Match:** Standard tiers give you dollar-for-dollar PPC value.
+* **Platinum Advantage:** Pay **30% more**, get **35% more rewards** + Exclusive Content.
+* **The Math:** You get a **5% pure currency bonus** on every Platinum purchase, effectively getting free money to use in the Arcade.
+
+### 🎒 Bonus Pack: "The Quick Fix"
+Perfect for when you need a little extra stash to keep the game going.
+* **Standard ($4.99):** Instantly adds **5.00 PPC** and **500 Gold Coins**.
+* **Platinum ($6.49):** The smart play—get **6.75 PPC** and **675 Gold Coins** (Includes 5% Bonus Value).
 
 ---
 
-## 🎨 Design System
 
-### Color Palette
+
+## 🎨 Design System
 
 **Pimpin Paul's Theme:**
 - Neon Green: `#00FF41`
 - Matrix Green: `#0D0`
 - Deep Black: `#000000`
+
+**Platinum Status Theme:**
+- Platinum Silver: `#E5E4E2`
+- Diamond Blue: `#B9F2FF`
+- Premium Shine: `#F5F5F5`
 
 **Diamondz Playhouse Theme:**
 - Gold: `#FFD700`
@@ -110,7 +132,7 @@ The origin story of the digital detective and his partnership with the chaotic g
 ### Visual Style
 - Urban-classy aesthetic
 - Neon glow effects
-- Metallic gradients
+- Metallic gradientswith deleting 
 - Sleek car silhouettes for Diamondz branding
 
 ---
@@ -124,7 +146,6 @@ The origin story of the digital detective and his partnership with the chaotic g
 
 ### Installation
 
-```bash
 # Clone the repository
 git clone https://github.com/krissi2023/krissi-pimpin-pimpire.git
 cd krissi-pimpin-pimpire
@@ -139,7 +160,10 @@ npm install
 
 # Set up environment variables
 cp .env.example .env
-# Edit .env with your API keys
+
+# 🔑 IMPORTANT: Configure Payments
+# Open .env and add your Stripe Publishable Key & Secret Key from the Stripe Dashboard
+# (Required for Comic Book & Coin purchases to work)
 
 # Start backend
 cd ../backend
@@ -148,6 +172,7 @@ npm start
 # Start frontend (in new terminal)
 cd ../frontend
 npm start
+
 ```
 
 ### Environment Variables
@@ -277,3 +302,4 @@ This project and all associated content (comics, characters, designs) are propri
 **Built with 💎 and ⚡ by Krissi**
 
 *Where Comics Meet Arcade Luxury*
+
