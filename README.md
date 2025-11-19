@@ -198,32 +198,22 @@ REACT_APP_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
 ---
 
 ## 📂 Repository Structure
-
-```
 krissi-pimpin-pimpire/
 ├── diamondz-playhouse/          # Main app
 │   ├── frontend/                # React app
 │   ├── backend/                 # Node.js API
+│   │   └── secure-vault/        # 🔒 PAID CONTENT (Only accessible after purchase)
+│   │       ├── Comics/          # PDF Downloads (e.g., DiamondHeist_Pt1.pdf)
+│   │       ├── Puzzles/         # Zip files (e.g., WordSearch_Bundle_01.zip)
+│   │       └── Wallpapers/      # 4K High-Res Images (e.g., PimpinPaul_Neon_4K.jpg)
 │   ├── docs/                    # Documentation
-│   └── assets/                  # Graphics & media
+│   └── assets/                  # Public Graphics (Logos/Banners)
 │
-├── Stories/                     # Comic content
+├── Stories/                     # Raw Creative Files (Scripts/Drafts)
 │   ├── Comics/                  # Diamondz series
-│   ├── PimpinPaul/             # Pimpin Paul series
-│   └── DiamondHeist/           # Heist series
-│
-├── Design/                      # UI/UX specifications
-│   └── APP_DESIGN_SPECS.md
-│
-├── SourceCode/                  # Game implementations
-│   ├── SlotGames/
-│   ├── TableGames/
-│   └── QuickGames/
-│
-└── Storefront/                  # E-commerce components
-```
-
----
+│   ├── PimpinPaul/              # Pimpin Paul series
+│   ├── DiamondHeist/            # Heist series
+│   └── EyeOfPempire/            # Eye of the Pempire drafts
 
 ## 📖 Documentation
 
@@ -302,4 +292,5 @@ This project and all associated content (comics, characters, designs) are propri
 **Built with 💎 and ⚡ by Krissi**
 
 *Where Comics Meet Arcade Luxury*
+
 
