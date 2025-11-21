@@ -9,6 +9,8 @@ jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: diamondz-playhouse/backend
@@ -45,6 +47,8 @@ jobs:
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: diamondz-playhouse/frontend
