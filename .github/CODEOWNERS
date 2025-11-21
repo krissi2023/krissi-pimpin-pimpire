@@ -1,0 +1,4 @@
+# CODEOWNERS file
+* @krissi2023
+/diamondz-playhouse/backend/ @krissi2023
+/diamondz-playhouse/frontend/ @krissi2023
