@@ -14,6 +14,8 @@ import Success from './pages/Success';
 import Cancel from './pages/Cancel';
 import DailyBonus from './pages/DailyBonus';
 import GraphicsDemo from './pages/GraphicsDemo';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 // Components
 import Navbar from './components/Navbar';
@@ -32,6 +34,8 @@ function App() {
             <main className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/comics" element={<ComicStore />} />
               <Route path="/arcade" element={<Arcade />} />
               <Route path="/daily-bonus" element={<DailyBonus />} />
