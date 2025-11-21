@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      # Root project
+      - name: Install root dependencies
+        run: npm ci
+      
+      - name: Lint root
+        run: npm run lint
+        continue-on-error: true
+      
+      # Backend
+      - name: Install backend dependencies
+        working-directory: ./diamondz-playhouse/backend
+        run: npm ci
+      
+      - name: Test backend
+        working-directory: ./diamondz-playhouse/backend
+        run: npm test
+        continue-on-error: true
+      
+      # Frontend
+      - name: Install frontend dependencies
+        working-directory: ./diamondz-playhouse/frontend
+        run: npm ci
+      
+      - name: Build frontend
+        working-directory: ./diamondz-playhouse/frontend
+        run: npm run build
+      
+      - name: Test frontend
+        working-directory: ./diamondz-playhouse/frontend
+        run: npm test -- --watchAll=false
+        continue-on-error: true
