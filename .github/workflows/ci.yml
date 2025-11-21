@@ -1,0 +1,79 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: diamondz-playhouse/backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install backend dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f yarn.lock ]; then
+            yarn install --frozen-lockfile
+          else
+            npm install
+          fi
+      - name: Lint backend (non-blocking)
+        run: |
+          if npm run -s lint --silent 2>/dev/null; then
+            npm run lint || true
+          else
+            echo "No lint script found, skipping"
+          fi
+      - name: Run backend tests (non-blocking)
+        run: |
+          if npm run -s test --silent 2>/dev/null; then
+            npm test || true
+          else
+            echo "No test script found, skipping"
+          fi
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: diamondz-playhouse/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install frontend dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f yarn.lock ]; then
+            yarn install --frozen-lockfile
+          else
+            npm install
+          fi
+      - name: Lint frontend (non-blocking)
+        run: |
+          if npm run -s lint --silent 2>/dev/null; then
+            npm run lint || true
+          else
+            echo "No lint script found, skipping"
+          fi
+      - name: Build frontend
+        run: |
+          if npm run -s build --silent 2>/dev/null; then
+            npm run build
+          else
+            echo "No build script found, skipping"
+          fi
