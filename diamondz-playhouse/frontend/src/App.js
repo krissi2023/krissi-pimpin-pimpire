@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import { AuthProvider } from './contexts/AuthContext';
 import './App.css';
 
 // Pages
@@ -23,11 +24,12 @@ const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 function App() {
   return (
-    <Elements stripe={stripePromise}>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <main className="main-content">
+    <AuthProvider>
+      <Elements stripe={stripePromise}>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <main className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/comics" element={<ComicStore />} />
@@ -43,6 +45,7 @@ function App() {
         </div>
       </Router>
     </Elements>
+    </AuthProvider>
   );
 }
 

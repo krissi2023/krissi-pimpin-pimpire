@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const User = require('../models/User');
+const Comic = require('../models/Comic');
+const Transaction = require('../models/Transaction');
 
 /**
  * Webhook handler factory - creates handler for different environments
@@ -93,59 +96,87 @@ async function handleCheckoutSessionCompleted(session) {
   const { comicId, userId, type } = session.metadata;
 
   if (type === 'comic_purchase') {
-    // TODO: Implement database logic
-    // 1. Mark comic as purchased for user
-    // 2. Unlock puzzle and wallpaper
-    // 3. Award gold points (e.g., 100 points per comic)
-    // 4. Award arcade credits ($50 = 5000 credits)
-    // 5. Award PB points (50 PB)
-    // 6. Send confirmation email
-    
-    console.log(`✅ Comic ${comicId} unlocked for user ${userId}`);
-    console.log(`🎁 Awarded rewards to user ${userId}:`);
-    console.log(`   - 100 Gold Points`);
-    console.log(`   - 5000 Arcade Credits ($50 value)`);
-    console.log(`   - 50 PB Points`);
-    console.log(`   - 3 Puzzles unlocked`);
-    console.log(`   - 5 Wallpapers unlocked`);
-    
-    // Example database update (uncomment when DB is ready):
-    /*
-    await User.findByIdAndUpdate(userId, {
-      $push: { purchasedComics: comicId },
-      $inc: { 
-        goldPoints: 100,
-        arcadeCredits: 5000,  // $50 in arcade credits
-        pbPoints: 50
+    try {
+      // Get comic details
+      const comic = await Comic.findOne({ comicId });
+      if (!comic) {
+        console.error(`❌ Comic ${comicId} not found in database`);
+        return;
       }
-    });
-    
-    await Comic.findByIdAndUpdate(comicId, {
-      $push: { purchasedBy: userId }
-    });
-    
-    // Unlock puzzles and wallpapers
-    await User.findByIdAndUpdate(userId, {
-      $push: {
-        unlockedPuzzles: { $each: [`${comicId}-puzzle-1`, `${comicId}-puzzle-2`, `${comicId}-puzzle-3`] },
-        unlockedWallpapers: { $each: [`${comicId}-wp-1`, `${comicId}-wp-2`, `${comicId}-wp-3`, `${comicId}-wp-4`, `${comicId}-wp-5`] }
+
+      // Get user
+      const user = await User.findById(userId);
+      if (!user) {
+        console.error(`❌ User ${userId} not found`);
+        return;
       }
-    });
-    
-    // Log transaction
-    await Transaction.create({
-      userId,
-      type: 'comic_purchase',
-      comicId,
-      amount: session.amount_total / 100,
-      rewards: {
-        goldPoints: 100,
-        arcadeCredits: 5000,
-        pbPoints: 50
-      },
-      status: 'completed'
-    });
-    */
+
+      // Check if already purchased
+      if (user.ownsComic(comicId)) {
+        console.log(`⚠️ User ${userId} already owns comic ${comicId}`);
+        return;
+      }
+
+      // Award rewards from comic data
+      const rewards = {
+        goldPoints: comic.goldPointsReward,
+        arcadeCredits: comic.arcadeCredits,
+        pbPoints: comic.pbPoints
+      };
+
+      // Update user with purchase and rewards
+      await user.purchaseComic(comicId, rewards);
+
+      // Unlock puzzles and wallpapers
+      const puzzles = Array.from({ length: comic.puzzlesCount }, (_, i) => ({
+        puzzleId: `${comicId}-puzzle-${i + 1}`
+      }));
+      
+      const wallpapers = Array.from({ length: comic.wallpapersCount }, (_, i) => ({
+        wallpaperId: `${comicId}-wp-${i + 1}`
+      }));
+
+      user.unlockedPuzzles.push(...puzzles);
+      user.unlockedWallpapers.push(...wallpapers);
+      await user.save();
+
+      // Update comic purchase count
+      comic.purchaseCount += 1;
+      await comic.save();
+
+      // Log transaction
+      await Transaction.create({
+        userId: user._id,
+        type: 'comic_purchase',
+        comicId,
+        amount: session.amount_total / 100,
+        stripeSessionId: session.id,
+        rewards,
+        status: 'completed'
+      });
+
+      console.log(`✅ Comic ${comicId} unlocked for user ${userId}`);
+      console.log(`🎁 Awarded rewards to user ${userId}:`);
+      console.log(`   - ${rewards.goldPoints} Gold Points`);
+      console.log(`   - ${rewards.arcadeCredits} Arcade Credits ($${(rewards.arcadeCredits / 100).toFixed(2)} value)`);
+      console.log(`   - ${rewards.pbPoints} PB Points`);
+      console.log(`   - ${comic.puzzlesCount} Puzzles unlocked`);
+      console.log(`   - ${comic.wallpapersCount} Wallpapers unlocked`);
+      
+    } catch (error) {
+      console.error('Error processing comic purchase:', error);
+      
+      // Log failed transaction
+      await Transaction.create({
+        userId,
+        type: 'comic_purchase',
+        comicId,
+        amount: session.amount_total / 100,
+        stripeSessionId: session.id,
+        status: 'failed',
+        metadata: { error: error.message }
+      });
+    }
   }
 }
 

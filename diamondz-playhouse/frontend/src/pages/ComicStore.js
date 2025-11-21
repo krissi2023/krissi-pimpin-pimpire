@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import { ComicCoverPlaceholder } from '../components/ImagePlaceholder';
 import './ComicStore.css';
 
 function ComicStore() {
   const [comics, setComics] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     fetchComics();
@@ -23,6 +25,11 @@ function ComicStore() {
   };
 
   const handlePurchase = async (comic) => {
+    if (!isAuthenticated || !user) {
+      alert('Please log in to purchase comics!');
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/payments/create-checkout-session`,
@@ -30,7 +37,7 @@ function ComicStore() {
           comicId: comic.id,
           comicTitle: comic.title,
           price: comic.price,
-          userId: 'user_123' // TODO: Get from auth context
+          userId: user.userId || user.id
         }
       );
 

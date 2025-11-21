@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import './Arcade.css';
 
 function Arcade() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     fetchGames();
@@ -22,6 +24,16 @@ function Arcade() {
   };
 
   const playGame = (game) => {
+    if (!isAuthenticated) {
+      alert('Please log in to play arcade games!');
+      return;
+    }
+    
+    if (user.arcadeCredits < game.minBet) {
+      alert('Insufficient credits! Purchase a comic to get arcade credits.');
+      return;
+    }
+    
     // TODO: Launch Phaser game
     alert(`Launching ${game.name}! (Game implementation coming soon)`);
   };
@@ -37,20 +49,30 @@ function Arcade() {
         Play themed slot machines and win big!
       </p>
 
-      <div className="arcade-stats">
-        <div className="stat-card card">
-          <div className="stat-value">500</div>
-          <div className="stat-label">Gold Points</div>
+      {isAuthenticated && user ? (
+        <div className="arcade-stats">
+          <div className="stat-card card">
+            <div className="stat-value">{user.goldPoints || 0}</div>
+            <div className="stat-label">Gold Points</div>
+          </div>
+          <div className="stat-card card">
+            <div className="stat-value">{user.pbPoints || 0}</div>
+            <div className="stat-label">PB Points</div>
+          </div>
+          <div className="stat-card card">
+            <div className="stat-value">${((user.arcadeCredits || 0) / 100).toFixed(2)}</div>
+            <div className="stat-label">Arcade Credits</div>
+          </div>
+          <div className="stat-card card">
+            <div className="stat-value">{user.totalWins || 0}</div>
+            <div className="stat-label">Total Wins</div>
+          </div>
         </div>
-        <div className="stat-card card">
-          <div className="stat-value">100</div>
-          <div className="stat-label">PB Points</div>
+      ) : (
+        <div className="login-prompt">
+          <p>Please log in to view your stats and play games!</p>
         </div>
-        <div className="stat-card card">
-          <div className="stat-value">25,000</div>
-          <div className="stat-label">Total Wins</div>
-        </div>
-      </div>
+      )}
 
       <div className="games-grid">
         {games.map(game => (
